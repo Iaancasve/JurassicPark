@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('alimento')->default(100); // Porcentaje
             $table->integer('averias')->default(0);    // Número de averías pendientes
             $table->enum('seguridad', ['Bajo', 'Medio', 'Alto', 'Crítico'])->default('Bajo');
+            $table->unique(['fila', 'columna']);
             $table->timestamps();
         });
     }

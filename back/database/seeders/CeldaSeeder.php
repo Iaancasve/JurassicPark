@@ -14,7 +14,7 @@ class CeldaSeeder extends Seeder
 {
     $peligros = ['Baja', 'Media', 'Alta', 'Extrema'];
     $seguridad = ['Bajo', 'Medio', 'Alto', 'Crítico'];
-    $climas = ['Tropical', 'Seco', 'Húmedo', 'Frío'];
+
 
     for ($f = 1; $f <= 4; $f++) {
         for ($c = 1; $c <= 4; $c++) {

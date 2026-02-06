@@ -17,8 +17,6 @@ class Celda extends Model
     'alimento', 
     'averias', 
     'seguridad',
-    'clima',
-    'limpieza'
 ];
 
 // Relación: Una celda tendrá muchos dinosaurios
