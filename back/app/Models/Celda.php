@@ -19,10 +19,9 @@ class Celda extends Model
     'seguridad',
 ];
 
-// Relación: Una celda tendrá muchos dinosaurios
-// public function dinosaurios() {
-//     return $this->hasMany(Dinosaurio::class);
-// } 
-
+    // Relación: Una celda tendrá muchos dinosaurios
+    public function dinosaurios() {
+     return $this->hasMany(Dinosaurio::class);
+    } 
 
 }
