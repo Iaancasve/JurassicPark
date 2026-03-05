@@ -15,6 +15,7 @@ class Dinosaurio extends Model
         'especie',
         'dieta',
         'edad',
+        'peligrosidad', 
         'estado_salud',
         'celda_id'
     ];

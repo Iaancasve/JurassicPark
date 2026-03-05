@@ -11,13 +11,13 @@ return new class extends Migration
         Schema::create('dinosaurios', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('especie');
-            $table->enum('dieta', ['Herbívoro', 'Carnívoro', 'Omnívoro']);
-            $table->integer('edad');
+            $table->string('especie'); 
+            $table->enum('dieta', ['Herbívoro', 'Carnívoro', 'Omnívoro']); 
+            $table->integer('edad'); 
+            $table->enum('peligrosidad', ['Bajo', 'Medio', 'Alto', 'Muy Alto', 'Extremo', 'Crítico'])->default('Bajo');
             $table->enum('estado_salud', ['Excelente', 'Bueno', 'Enfermo', 'Crítico'])->default('Bueno');
             // Relación con la tabla celdas
             $table->foreignId('celda_id')->constrained('celdas')->onDelete('cascade');
-            
             $table->timestamps();
         });
     }
