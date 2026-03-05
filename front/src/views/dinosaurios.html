@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Dinosaurios - Jurassic Park</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <span class="navbar-brand">Panel Administrativo - Dinosaurios</span>
+            <a href="./dashboard.html" class="btn btn-outline-light btn-sm">Volver al Mapa</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Inventario de Dinosaurios</h2>
+            <button id="btnNuevoDino" class="btn btn-primary">Registrar Nuevo Dino</button>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre (Nick)</th>
+                            <th>Especie</th>
+                            <th>Peligrosidad</th>
+                            <th>Salud</th>
+                            <th>Celda</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaDinos">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/components/dinoManager.ts"></script>
+</body>
+</html>
