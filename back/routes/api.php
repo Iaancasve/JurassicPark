@@ -17,7 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('dinosaurios/{dinosaurio}', [DinosaurioController::class, 'show']);
 
     // Rutas protegidas solo para Administradores 
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware('role:Administrador')->group(function () {
         // Celdas: crear, editar y borrar
         Route::post('celdas', [CeldaController::class, 'store']);
         Route::put('celdas/{celda}', [CeldaController::class, 'update']);
