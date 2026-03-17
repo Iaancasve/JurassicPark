@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        
+
         if (Auth::attempt(['nick' => $request->nick, 'password' => $request->password])) {
             $auth = Auth::user();
             $tokenResult = $auth->createToken('LaravelSanctumAuth');
@@ -20,7 +21,7 @@ class AuthController extends Controller
                 'id'    => $auth->id,
                 'nick'  => $auth->nick,
                 'foto'  => $auth->foto,
-                'role'  => $auth->role->slug, 
+                'role'  => $auth->role->slug,
                 'token' => $tokenResult->plainTextToken,
             ];
 
@@ -32,12 +33,39 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        
+
         $user = Auth::user();
         if ($user) {
             $user->tokens()->delete();
             return response()->json(["success" => true, "message" => "Sesión cerrada y tokens eliminados"], 200);
         }
         return response()->json(["success" => false, "message" => "No autorizado"], 401);
+    }
+
+    
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'password' => 'nullable|string|min:8|confirmed', 
+        ]);
+
+        $user = $request->user();
+
+       
+        $user->name = $validated['name'];
+
+        
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Perfil actualizado correctamente',
+            'data'    => $user
+        ]);
     }
 }

@@ -9,6 +9,7 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::put('/user/update', [AuthController::class, 'updateProfile']);
 
     // Rutas abiertas a todos los empleados 
     Route::get('celdas', [CeldaController::class, 'index']);
