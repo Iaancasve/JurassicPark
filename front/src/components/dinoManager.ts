@@ -3,22 +3,14 @@ import type { Dinosaurio } from '../interfaces/Dinosaurio';
 
 declare var bootstrap: any;
 
-
 const listaDinos = document.querySelector<HTMLTableSectionElement>('#listaDinos');
 const btnNuevoDino = document.querySelector<HTMLButtonElement>('#btnNuevoDino');
 const dinoForm = document.querySelector<HTMLFormElement>('#dinoForm');
 const btnConfirmDelete = document.getElementById('btnConfirmDelete');
 const dinoIdInput = document.querySelector<HTMLInputElement>('#dinoId');
-
-
 const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
 const dinoEntryModal = new bootstrap.Modal(document.getElementById('dinoModal'));
-
-
 let idAEliminar: number | null = null;
-
-
-
 
 const showToast = (mensaje: string, color: 'success' | 'danger' = 'success') => {
     const toastEl = document.getElementById('liveToast');
@@ -34,7 +26,6 @@ const showToast = (mensaje: string, color: 'success' | 'danger' = 'success') => 
     }
 };
 
-
 const getPeligroColor = (nivel: string) => {
     const colors: Record<string, string> = {
         'Bajo': 'success',
@@ -46,7 +37,6 @@ const getPeligroColor = (nivel: string) => {
     };
     return colors[nivel] || 'primary';
 };
-
 
 const renderDinos = (dinos: Dinosaurio[]) => {
     if (!listaDinos) return;
@@ -65,7 +55,6 @@ const renderDinos = (dinos: Dinosaurio[]) => {
     `).join('');
 };
 
-
 const loadDinos = async () => {
     try {
         const response = await dinoService.getAll();
@@ -74,8 +63,6 @@ const loadDinos = async () => {
         showToast('Error al conectar con el sistema del parque', 'danger');
     }
 };
-
-
 
 listaDinos?.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
@@ -87,8 +74,6 @@ listaDinos?.addEventListener('click', async (e) => {
         idAEliminar = Number(id);
         confirmDeleteModal.show();
     }
-
-    
     if (target.classList.contains('edit-btn')) {
         try {
             const response = await dinoService.getById(Number(id));
@@ -113,7 +98,6 @@ listaDinos?.addEventListener('click', async (e) => {
     }
 });
 
-
 btnConfirmDelete?.addEventListener('click', async () => {
     if (idAEliminar === null) return;
 
@@ -133,14 +117,12 @@ btnConfirmDelete?.addEventListener('click', async () => {
     }
 });
 
-
 btnNuevoDino?.addEventListener('click', () => {
     dinoForm?.reset();
     if (dinoIdInput) dinoIdInput.value = '';
     document.getElementById('modalTitle')!.textContent = 'Registrar Dinosaurio';
     dinoEntryModal.show();
 });
-
 
 dinoForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -174,6 +156,5 @@ dinoForm?.addEventListener('submit', async (e) => {
         showToast(msg, 'danger');
     }
 });
-
 
 loadDinos();

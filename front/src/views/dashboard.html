@@ -7,14 +7,19 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-  <nav class="navbar navbar-dark bg-dark mb-4">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
     <div class="container-fluid">
-      <span class="navbar-brand mb-0 h1">Panel de Control - Jurassic Park</span>
+      <span class="navbar-brand mb-0 h1 text-warning">JURASSIC PARK</span>
       
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="navbar-nav ms-3">
+          <a class="nav-link active" href="dashboard.html">Mapa</a>
+          <a class="nav-link" href="dinosaurios.html">Dinosaurios</a>
+          <a class="nav-link" href="celdas.html">Celdas</a>
+        </div>
+      </div>
+
       <div class="d-flex gap-2">
-        <a href="/src/views/dinosaurios.html" class="btn btn-warning btn-sm fw-bold">
-           Gestionar Dinosaurios
-        </a>
         <button id="logoutBtn" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
       </div>
     </div>
@@ -29,7 +34,7 @@
     </div>
     
     <div id="gridContainer" class="row row-cols-1 row-cols-md-4 g-4">
-      </div>
+    </div>
   </div>
 
   <script type="module" src="../components/dashboard.ts"></script>
