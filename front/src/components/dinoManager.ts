@@ -55,5 +55,25 @@ const loadDinos = async () => {
     }
 };
 
+listaDinos?.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+    
+    // Lógica para ELIMINAR
+    if (target.classList.contains('delete-btn')) {
+        const id = target.getAttribute('data-id');
+        if (!id) return;
+
+        if (confirm('¿Estás seguro de que deseas eliminar este espécimen del registro?')) {
+            try {
+                await dinoService.delete(Number(id));
+                alert('Dinosaurio eliminado correctamente');
+                loadDinos(); 
+            } catch (error) {
+                alert('No tienes permisos o hubo un error al eliminar');
+            }
+        }
+    }
+});
+
 // Inicializar carga
 loadDinos();
