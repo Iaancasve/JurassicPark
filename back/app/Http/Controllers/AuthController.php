@@ -42,20 +42,19 @@ class AuthController extends Controller
         return response()->json(["success" => false, "message" => "No autorizado"], 401);
     }
 
-    
+
     public function updateProfile(Request $request)
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'password' => 'nullable|string|min:8|confirmed', 
+            'nick'     => 'required|string|max:255', 
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $user = $request->user();
 
-       
-        $user->name = $validated['name'];
-
         
+        $user->nick = $validated['nick'];
+
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
@@ -67,5 +66,11 @@ class AuthController extends Controller
             'message' => 'Perfil actualizado correctamente',
             'data'    => $user
         ]);
+    }
+    
+
+    public function perfil(Request $request)
+    {
+    return response()->json($request->user());
     }
 }
