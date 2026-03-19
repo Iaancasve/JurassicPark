@@ -3,6 +3,16 @@ import { apiFetch } from "../services/api";
 const gridContainer = document.querySelector<HTMLDivElement>('#gridContainer');
 const logoutBtn = document.querySelector<HTMLButtonElement>('#logoutBtn');
 
+const userRole = localStorage.getItem('role');
+const navUsers = document.getElementById('nav-users');
+
+if (userRole === 'Administrador' && navUsers) {
+    navUsers.classList.remove('d-none');
+}
+if (window.location.pathname.includes('usuarios.html') && userRole !== 'Administrador') {
+    window.location.href = 'dashboard.html';
+}
+
 
 const loadCeldas = async () => {
     try {
