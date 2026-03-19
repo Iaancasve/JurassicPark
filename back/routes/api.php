@@ -4,7 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CeldaController;
 use App\Http\Controllers\DinosaurioController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\RolesController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -39,6 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('users/{user}', [UserController::class, 'destroy']);
 
         // Roles
-        Route::get('roles', [RolesController::class, 'index']);
+        Route::get('roles', [RoleController::class, 'index']);
     });
 });
