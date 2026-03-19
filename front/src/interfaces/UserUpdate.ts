@@ -1,5 +1,5 @@
 export interface UserUpdate {
-    nick: string;
+    nick: string; 
     password?: string;
     password_confirmation?: string;
-}   
+}

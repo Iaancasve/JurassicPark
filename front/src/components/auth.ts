@@ -31,6 +31,7 @@ export const setupLogin = (formElement: HTMLFormElement) => {
 };
 
 export const updateProfile = async (userData: UserUpdate) => {
+    console.log("Enviando a la API:", userData); // Revisa esto en la consola si falla
     return await apiFetch('/user/update', {
         method: 'PUT',
         body: JSON.stringify(userData)
