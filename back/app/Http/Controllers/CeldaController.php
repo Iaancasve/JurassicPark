@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Celda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Events\CeldaUpdated;
 
 class CeldaController extends Controller
 {
@@ -84,4 +85,23 @@ class CeldaController extends Controller
         $celda->delete();
         return response()->json(["success" => true, "message" => "Celda eliminada del parque"], 200);
     }
+    
+    public function recargarAlimento($id)
+    {
+    try {
+        $celda = Celda::findOrFail($id);
+        $celda->alimento = 100;
+        $celda->save();
+
+        broadcast(new CeldaUpdated($celda))->toOthers();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Alimento recargado al 100%',
+            'data' => $celda
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
 }

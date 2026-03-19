@@ -1,6 +1,6 @@
 import { celdaService } from '../services/celdaService';
 import type { Celda } from '../interfaces/Celda';
-import { initNavbar } from "./navBar";
+import { initNavbar } from "./navbar";
 
 declare var bootstrap: any;
 
