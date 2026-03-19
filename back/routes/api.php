@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CeldaController;
 use App\Http\Controllers\DinosaurioController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -29,5 +31,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('dinosaurios', [DinosaurioController::class, 'store']);
         Route::put('dinosaurios/{dinosaurio}', [DinosaurioController::class, 'update']);
         Route::delete('dinosaurios/{dinosaurio}', [DinosaurioController::class, 'destroy']);
+
+        // Usuarios 
+        Route::get('users', [UserController::class, 'index']);
+        Route::post('users', [UserController::class, 'store']);
+        Route::put('users/{user}', [UserController::class, 'update']);    
+        Route::delete('users/{user}', [UserController::class, 'destroy']);
+
+        // Roles
+        Route::get('roles', [RoleController::class, 'index']);
     });
 });

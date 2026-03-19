@@ -1,5 +1,6 @@
 import type { UserUpdate } from '../interfaces/UserUpdate';
 import { apiFetch } from '../services/api';
+import { initNavbar } from "./navBar";
 
 export const setupLogin = (formElement: HTMLFormElement) => {
     formElement.addEventListener('submit', async (e) => {
@@ -31,9 +32,11 @@ export const setupLogin = (formElement: HTMLFormElement) => {
 };
 
 export const updateProfile = async (userData: UserUpdate) => {
-    console.log("Enviando a la API:", userData); // Revisa esto en la consola si falla
+    console.log("Enviando a la API:", userData); 
     return await apiFetch('/user/update', {
         method: 'PUT',
         body: JSON.stringify(userData)
     });
 };
+
+initNavbar();

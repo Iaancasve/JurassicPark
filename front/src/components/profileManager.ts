@@ -1,6 +1,7 @@
 import { apiFetch } from '../services/api';
 import { updateProfile } from './auth';
 import type { UserUpdate } from '../interfaces/UserUpdate';
+import { initNavbar } from "./navBar";
 
 declare var bootstrap: any;
 
@@ -81,5 +82,5 @@ function showToast(mensaje: string, color: 'success' | 'danger') {
     }
 }
 
-
+initNavbar();
 loadUserData();

@@ -1,5 +1,7 @@
+import { initNavbar } from "./navBar";
 import { dinoService } from '../services/dinoService';
 import type { Dinosaurio } from '../interfaces/Dinosaurio';
+
 
 declare var bootstrap: any;
 
@@ -157,4 +159,5 @@ dinoForm?.addEventListener('submit', async (e) => {
     }
 });
 
+initNavbar();
 loadDinos();
