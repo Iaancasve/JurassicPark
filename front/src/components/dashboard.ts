@@ -1,10 +1,10 @@
-import { initNavbar } from './navBar';
 import { apiFetch } from "../services/api";
+import { initNavbar } from "./navbar";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
-// Configuración de WebSockets
 (window as any).Pusher = Pusher;
+
 const echo = new Echo({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
@@ -15,40 +15,48 @@ const echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
+
+echo.connector.pusher.connection.bind('connected', () => {
+    console.log(' Conectado a Reverb con éxito');
+});
+
+echo.connector.pusher.connection.bind('error', (err: any) => {
+    console.error(' Error de conexión a Reverb:', err);
+});
+
+
 const gridContainer = document.querySelector<HTMLDivElement>('#gridContainer');
 const btnSimular = document.getElementById('btnSimular') as HTMLButtonElement;
 const userRole = localStorage.getItem('role')?.toLowerCase().trim();
 
-/**
- * Escucha en tiempo real: Actualiza el mapa cuando llega un evento del Back
- */
+
 echo.channel('mapa-parque')
-    .listen('.celda.actualizada', (data: any) => { 
-        console.log("¡Llegó algo!", data);
+    .listen('.celda.actualizada', (data: any) => {
+        console.log(data);
         loadCeldas(); 
     });
 
-/**
- * Gestión del botón de Simulación
- */
+
 const esAdmin = userRole === 'admin' || userRole === 'administrador';
 
 if (esAdmin && btnSimular) {
     btnSimular.classList.remove('d-none');
     btnSimular.addEventListener('click', async () => {
         try {
+            console.log("Enviando petición de simulación...");
             btnSimular.disabled = true;
             btnSimular.textContent = 'Simulando...';
-            
+
             await apiFetch('/simular', { method: 'POST' });
-            
+
             setTimeout(() => {
                 btnSimular.disabled = false;
-                btnSimular.textContent = '⚡ Iniciar Simulación de Caos';
+                btnSimular.textContent = ' Iniciar Simulación de Caos';
             }, 1000);
         } catch (error) {
-            console.error("Error en la simulación", error);
+            console.error("Error al disparar la simulación:", error);
             btnSimular.disabled = false;
+            btnSimular.textContent = ' Iniciar Simulación de Caos';
         }
     });
 }
@@ -56,11 +64,11 @@ if (esAdmin && btnSimular) {
 const loadCeldas = async () => {
     try {
         const response = await apiFetch('/celdas');
-        if (gridContainer) {
+        if (gridContainer && response.data) {
             renderGrid(response.data);
         }
     } catch (error) {
-        console.error("Error cargando el mapa", error);
+        console.error("Error cargando el mapa:", error);
     }
 };
 
@@ -73,7 +81,8 @@ const renderGrid = (celdas: any[]) => {
                 <div class="card-body">
                     <h5 class="card-title fw-bold">${celda.nombre}</h5>
                     <p class="card-text small">
-                        <strong>Alimento:</strong> ${celda.alimento}%<br>
+                        <strong>Alimento:</strong> 
+                        <span class="${celda.alimento < 25 ? 'text-danger fw-bold' : ''}">${celda.alimento}%</span><br>
                         <strong>Averías:</strong> ${celda.averias}
                     </p>
                 </div>
@@ -88,8 +97,10 @@ const renderGrid = (celdas: any[]) => {
 };
 
 const getColorBySeguridad = (nivel: string) => {
-    if (nivel === 'Crítico' || nivel === 'Extrema') return 'danger';
-    if (nivel === 'Alto' || nivel === 'Alta') return 'warning';
+    const n = nivel?.toLowerCase();
+    if (n === 'crítico' || n === 'extrema') return 'danger';
+    if (n === 'alto' || n === 'alta') return 'warning';
+    if (n === 'medio' || n === 'media') return 'info';
     return 'primary';
 };
 

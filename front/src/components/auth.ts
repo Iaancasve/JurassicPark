@@ -1,6 +1,6 @@
+import { initNavbar } from './navbar';
 import type { UserUpdate } from '../interfaces/UserUpdate';
 import { apiFetch } from '../services/api';
-import { initNavbar } from "./navBar";
 
 export const setupLogin = (formElement: HTMLFormElement) => {
     formElement.addEventListener('submit', async (e) => {

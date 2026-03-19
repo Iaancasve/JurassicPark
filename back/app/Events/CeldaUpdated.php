@@ -23,7 +23,7 @@ class CeldaUpdated implements ShouldBroadcast
     public function broadcastOn()
     {
         // Canal público
-        return new Channel('parque-mapa');
+        return new Channel('mapa-parque');
     }
 
     public function broadcastAs()
