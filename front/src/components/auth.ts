@@ -1,3 +1,4 @@
+import type { UserUpdate } from '../interfaces/UserUpdate';
 import { apiFetch } from '../services/api';
 
 export const setupLogin = (formElement: HTMLFormElement) => {
@@ -26,5 +27,13 @@ export const setupLogin = (formElement: HTMLFormElement) => {
                 errorMsg.classList.remove('d-none');
             }
         }
+    });
+};
+
+export const updateProfile = async (userData: UserUpdate) => {
+    console.log("Enviando a la API:", userData); // Revisa esto en la consola si falla
+    return await apiFetch('/user/update', {
+        method: 'PUT',
+        body: JSON.stringify(userData)
     });
 };
