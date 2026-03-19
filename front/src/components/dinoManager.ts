@@ -1,4 +1,4 @@
-import { initNavbar } from "./navBar";
+import { initNavbar } from "./navbar";
 import { dinoService } from '../services/dinoService';
 import type { Dinosaurio } from '../interfaces/Dinosaurio';
 

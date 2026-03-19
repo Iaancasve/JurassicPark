@@ -1,7 +1,7 @@
 import { userService } from '../services/userService';
 import { roleService, type Role } from '../services/roleService';
 import type { User} from '../interfaces/User';
-import { initNavbar } from './navBar';
+import { initNavbar } from "./navbar";
 
 declare var bootstrap: any;
 

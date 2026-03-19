@@ -5,6 +5,7 @@ use App\Http\Controllers\CeldaController;
 use App\Http\Controllers\DinosaurioController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SimulacionController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -40,5 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Roles
         Route::get('roles', [RoleController::class, 'index']);
+
+        // Simulacion
+        Route::post('simular', [SimulacionController::class, 'ejecutar']);
     });
 });

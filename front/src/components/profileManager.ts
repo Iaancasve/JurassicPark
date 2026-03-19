@@ -1,7 +1,7 @@
 import { apiFetch } from '../services/api';
 import { updateProfile } from './auth';
 import type { UserUpdate } from '../interfaces/UserUpdate';
-import { initNavbar } from "./navBar";
+import { initNavbar } from "./navbar";
 
 declare var bootstrap: any;
 
