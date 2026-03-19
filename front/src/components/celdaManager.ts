@@ -1,5 +1,6 @@
 import { celdaService } from '../services/celdaService';
 import type { Celda } from '../interfaces/Celda';
+import { initNavbar } from "./navBar";
 
 declare var bootstrap: any;
 
@@ -129,4 +130,5 @@ btnNuevaCelda?.addEventListener('click', () => {
     celdaEntryModal.show();
 });
 
+initNavbar();
 loadCeldas();
