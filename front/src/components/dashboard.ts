@@ -41,7 +41,7 @@ gridContainer?.addEventListener('click', async (e) => {
 
     if (target.classList.contains('btn-reparar')) {
         try {
-            target.textContent = '🛠️...';
+            target.textContent = '...';
             await apiFetch(`/celdas/${id}/reparar`, { method: 'POST' });
         } catch (error) { console.error(error); }
     }
@@ -75,7 +75,7 @@ const loadCeldas = async () => {
 const renderGrid = (celdas: any[]) => {
     if (!gridContainer) return;
 
-    const esAdmin = userRole === 'admin' || userRole === 'administrador';
+    
     const esVeterinario = userRole === 'veterinario';
     const esMantenimiento = userRole === 'mantenimiento';
 
