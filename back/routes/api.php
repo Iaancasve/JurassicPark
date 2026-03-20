@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('celdas', [CeldaController::class, 'index']);
     Route::get('celdas/{celda}', [CeldaController::class, 'show']);
     Route::post('celdas/{id}/recargar', [CeldaController::class, 'recargarAlimento']);
+    Route::post('celdas/{id}/reparar', [CeldaController::class, 'repararAveria']);
     Route::get('dinosaurios', [DinosaurioController::class, 'index']);
     Route::get('dinosaurios/{dinosaurio}', [DinosaurioController::class, 'show']);
 

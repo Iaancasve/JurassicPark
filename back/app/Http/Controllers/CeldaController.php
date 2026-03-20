@@ -103,5 +103,29 @@ class CeldaController extends Controller
     } catch (\Exception $e) {
         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
-}
+    }
+
+    public function repararAveria($id)
+    {
+    try {
+        $celda = Celda::findOrFail($id);
+        
+        if ($celda->averias > 0) {
+            $celda->averias -= 1;
+            $celda->save();
+
+            
+            broadcast(new CeldaUpdated($celda))->toOthers();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Avería reparada',
+            'data' => $celda
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+    }
+
 }
