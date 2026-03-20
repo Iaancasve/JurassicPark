@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('celdas/{id}/reparar', [CeldaController::class, 'repararAveria']);
     Route::get('dinosaurios', [DinosaurioController::class, 'index']);
     Route::get('dinosaurios/{dinosaurio}', [DinosaurioController::class, 'show']);
+    Route::get('celdas-stats', [CeldaController::class, 'contarDinosaurios']);  
 
 
     // Rutas protegidas solo para Administradores 

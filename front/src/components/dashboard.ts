@@ -22,7 +22,7 @@ const userRole = localStorage.getItem('role')?.toLowerCase().trim();
 
 echo.channel('mapa-parque')
     .listen('.celda.actualizada', (data: any) => {
-        console.log("WebSocket: Cambio detectado en", data.celda.nombre);
+        console.log("WebSocket: Actualizando conteo y estado de", data.celda.nombre);
         loadCeldas(); 
     });
 
@@ -63,7 +63,7 @@ if (esAdmin && btnSimular) {
 
 const loadCeldas = async () => {
     try {
-        const response = await apiFetch('/celdas');
+        const response = await apiFetch('/celdas-stats');
         if (gridContainer && response.data) {
             renderGrid(response.data);
         }
@@ -84,8 +84,13 @@ const renderGrid = (celdas: any[]) => {
         return `
         <div class="col">
             <div class="card h-100 shadow-sm border-2 border-${color}">
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold">${celda.nombre}</h5>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title fw-bold mb-0">${celda.nombre}</h5>
+                        <span class="badge rounded-pill bg-dark" title="Dinosaurios en esta celda">
+                             ${celda.dinosaurios_count || 0}
+                        </span>
+                    </div>
                     <hr>
                     <p class="card-text mb-1 small"><strong> Alimento:</strong> ${celda.alimento}%</p>
                     <div class="progress mb-3" style="height: 10px;">
