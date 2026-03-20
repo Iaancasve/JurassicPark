@@ -21,7 +21,7 @@ class AuthController extends Controller
                 'id'    => $auth->id,
                 'nick'  => $auth->nick,
                 'foto'  => $auth->foto,
-                'role'  => $auth->role->slug,
+                'role'  => $auth->role->nombre,
                 'token' => $tokenResult->plainTextToken,
             ];
 

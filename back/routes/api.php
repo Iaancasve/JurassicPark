@@ -18,8 +18,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rutas abiertas a todos los empleados 
     Route::get('celdas', [CeldaController::class, 'index']);
     Route::get('celdas/{celda}', [CeldaController::class, 'show']);
+    Route::post('celdas/{id}/recargar', [CeldaController::class, 'recargarAlimento']);
     Route::get('dinosaurios', [DinosaurioController::class, 'index']);
     Route::get('dinosaurios/{dinosaurio}', [DinosaurioController::class, 'show']);
+
 
     // Rutas protegidas solo para Administradores 
     Route::middleware('role:Administrador')->group(function () {
