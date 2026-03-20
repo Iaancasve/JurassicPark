@@ -22,39 +22,44 @@ const userRole = localStorage.getItem('role')?.toLowerCase().trim();
 
 echo.channel('mapa-parque')
     .listen('.celda.actualizada', (data: any) => {
-        console.log("WebSocket: Actualización recibida", data.celda);
+        console.log("WebSocket: Cambio detectado en", data.celda.nombre);
         loadCeldas(); 
     });
 
 
-if ((userRole === 'admin' || userRole === 'administrador') && btnSimular) {
+gridContainer?.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+    const id = target.getAttribute('data-id');
+    if (!id) return;
+
+    if (target.classList.contains('btn-recargar')) {
+        try {
+            target.textContent = '...';
+            await apiFetch(`/celdas/${id}/recargar`, { method: 'POST' });
+        } catch (error) { console.error(error); }
+    }
+
+    if (target.classList.contains('btn-reparar')) {
+        try {
+            target.textContent = '...';
+            await apiFetch(`/celdas/${id}/reparar`, { method: 'POST' });
+        } catch (error) { console.error(error); }
+    }
+});
+
+
+const esAdmin = userRole === 'admin' || userRole === 'administrador';
+if (esAdmin && btnSimular) {
     btnSimular.classList.remove('d-none');
     btnSimular.addEventListener('click', async () => {
         try {
             btnSimular.disabled = true;
             await apiFetch('/simular', { method: 'POST' });
             setTimeout(() => btnSimular.disabled = false, 1000);
-        } catch (error) {
-            console.error("Error simulación:", error);
-            btnSimular.disabled = false;
-        }
+        } catch (error) { btnSimular.disabled = false; }
     });
 }
 
-gridContainer?.addEventListener('click', async (e) => {
-    const target = e.target as HTMLElement;
-    if (target.classList.contains('btn-recargar')) {
-        const id = target.getAttribute('data-id');
-        try {
-            target.textContent = '...';
-            await apiFetch(`/celdas/${id}/recargar`, { method: 'POST' });
-        } catch (error) {
-            console.error("Error al recargar alimento:", error);
-            alert("No se pudo recargar el alimento.");
-            loadCeldas();
-        }
-    }
-});
 
 const loadCeldas = async () => {
     try {
@@ -63,37 +68,48 @@ const loadCeldas = async () => {
             renderGrid(response.data);
         }
     } catch (error) {
-        console.error("Error cargando el mapa:", error);
+        console.error("Error cargando el mapa", error);
     }
 };
 
 const renderGrid = (celdas: any[]) => {
     if (!gridContainer) return;
+
     
-    const puedeRecargar = userRole === 'admin' || userRole === 'administrador' || userRole === 'veterinario';
+    const esVeterinario = userRole === 'veterinario';
+    const esMantenimiento = userRole === 'mantenimiento';
 
     gridContainer.innerHTML = celdas.map(celda => {
         const color = getColorBySeguridad(celda.seguridad);
         return `
         <div class="col">
             <div class="card h-100 shadow-sm border-2 border-${color}">
-                <div class="card-body">
+                <div class="card-body text-center">
                     <h5 class="card-title fw-bold">${celda.nombre}</h5>
-                    <p class="card-text mb-1">
-                        <strong> Alimento:</strong> ${celda.alimento}%
-                    </p>
+                    <hr>
+                    <p class="card-text mb-1 small"><strong> Alimento:</strong> ${celda.alimento}%</p>
                     <div class="progress mb-3" style="height: 10px;">
                         <div class="progress-bar bg-${celda.alimento < 25 ? 'danger' : 'success'}" 
-                             role="progressbar" style="width: ${celda.alimento}%"></div>
+                             style="width: ${celda.alimento}%"></div>
                     </div>
-                    <p class="card-text small text-muted">
-                        <strong> Averías:</strong> ${celda.averias}
+                    <p class="card-text">
+                        <strong> Averías:</strong> 
+                        <span class="badge ${celda.averias > 0 ? 'bg-warning text-dark' : 'bg-light text-muted'}">
+                            ${celda.averias} activas
+                        </span>
                     </p>
-                    ${puedeRecargar ? `
-                        <button class="btn btn-sm btn-outline-success w-100 btn-recargar" data-id="${celda.id}">
-                            Rellenar Comida
-                        </button>
-                    ` : ''}
+                    <div class="d-grid gap-2 mt-3">
+                        ${(esAdmin || esVeterinario) ? `
+                            <button class="btn btn-sm btn-outline-success btn-recargar" data-id="${celda.id}">
+                                Reponer Alimento
+                            </button>
+                        ` : ''}
+                        ${(esAdmin || esMantenimiento) ? `
+                            <button class="btn btn-sm btn-outline-primary btn-reparar" data-id="${celda.id}" ${celda.averias === 0 ? 'disabled' : ''}>
+                                Reparar 1 Avería
+                            </button>
+                        ` : ''}
+                    </div>
                 </div>
             </div>
         </div>
