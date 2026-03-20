@@ -85,6 +85,16 @@ class CeldaController extends Controller
         $celda->delete();
         return response()->json(["success" => true, "message" => "Celda eliminada del parque"], 200);
     }
+
+    public function contarDinosaurios()
+    {
+    $celdas = Celda::withCount('dinosaurios')->get();
+    
+    return response()->json([
+        'success' => true,
+        'data' => $celdas
+    ]);
+    }
     
     public function recargarAlimento($id)
     {
@@ -127,5 +137,6 @@ class CeldaController extends Controller
         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
     }
+
 
 }
