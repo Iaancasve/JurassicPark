@@ -88,7 +88,9 @@ class CeldaController extends Controller
 
     public function contarDinosaurios()
     {
-    $celdas = Celda::withCount('dinosaurios')->get();
+    $celdas = Celda::withCount('dinosaurios')
+        ->with('trabajadores.role') 
+        ->get();
     
     return response()->json([
         'success' => true,
