@@ -24,4 +24,9 @@ class Celda extends Model
      return $this->hasMany(Dinosaurio::class);
     } 
 
+    // Relación: Una celda tendra muchos trabajadores
+    public function trabajadores() {
+    return $this->belongsToMany(User::class, 'celda_user');
+    }
+
 }

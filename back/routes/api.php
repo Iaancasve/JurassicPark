@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('celdas', [CeldaController::class, 'store']);
         Route::put('celdas/{celda}', [CeldaController::class, 'update']);
         Route::delete('celdas/{celda}', [CeldaController::class, 'destroy']);
+        Route::post('celdas/asignar', [CeldaController::class, 'asignarTrabajador']);
 
         // Dinosaurios: crear, editar y borrar
         Route::post('dinosaurios', [DinosaurioController::class, 'store']);
@@ -42,6 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('users', [UserController::class, 'store']);
         Route::put('users/{user}', [UserController::class, 'update']);    
         Route::delete('users/{user}', [UserController::class, 'destroy']);
+
+        // Listar solo trabajadores (sin admins)
+        Route::get('trabajadores', [UserController::class, 'listarTrabajadores']);
 
         // Roles
         Route::get('roles', [RoleController::class, 'index']);

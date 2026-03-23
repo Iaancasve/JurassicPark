@@ -88,7 +88,9 @@ class CeldaController extends Controller
 
     public function contarDinosaurios()
     {
-    $celdas = Celda::withCount('dinosaurios')->get();
+    $celdas = Celda::withCount('dinosaurios')
+        ->with('trabajadores.role') 
+        ->get();
     
     return response()->json([
         'success' => true,
@@ -138,5 +140,21 @@ class CeldaController extends Controller
     }
     }
 
+    public function asignarTrabajador(Request $request)
+    {
+    $request->validate([
+        'celda_id' => 'required|exists:celdas,id',
+        'user_id' => 'required|exists:users,id',
+    ]);
 
+    $celda = Celda::findOrFail($request->celda_id);
+    
+    // Añade al usuario sin borrar a los que ya estaban
+    $celda->trabajadores()->syncWithoutDetaching([$request->user_id]);
+
+    return response()->json([
+        'success' => true, 
+        'message' => 'Personal asignado correctamente'
+    ]);
+    }
 }
