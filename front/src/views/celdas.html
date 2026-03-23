@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Celdas - Jurassic Park</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1 text-warning">JURASSIC PARK</span>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-3">
+                    <a class="nav-link" href="dashboard.html">Mapa</a>
+                    <a class="nav-link d-none" id="nav-dinos" href="dinosaurios.html">Dinosaurios</a>
+                    <a class="nav-link d-none" id="nav-celdas" href="celdas.html">Celdas</a>
+                    <a class="nav-link d-none" id="nav-users" href="usuarios.html">Usuarios</a>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 align-items-center">
+                <a class="nav-link text-white me-2" href="perfil.html">Mi perfil</a>
+                <button id="logoutBtn" class="btn btn-outline-danger btn-sm">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Gestión de Infraestructura (Celdas)</h2>
+            <button id="btnNuevaCelda" class="btn btn-success">Construir Nueva Celda</button>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Ubicación (F,C)</th>
+                            <th>Capacidad</th>
+                            <th>Peligrosidad</th>
+                            <th>Alimento (%)</th>
+                            <th>Averías</th>
+                            <th>Seguridad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaCeldas"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="celdaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Configurar Celda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="celdaForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="celdaId">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre del Recinto</label>
+                                <input type="text" id="nombre" class="form-control" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Fila (Y)</label>
+                                <input type="number" id="fila" class="form-control" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Columna (X)</label>
+                                <input type="number" id="columna" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Capacidad Animales</label>
+                                <input type="number" id="capacidad_animales" class="form-control" required min="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Peligrosidad</label>
+                                <select id="peligrosidad" class="form-select">
+                                    <option value="Baja">Baja</option>
+                                    <option value="Media">Media</option>
+                                    <option value="Alta">Alta</option>
+                                    <option value="Extrema">Extrema</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Seguridad</label>
+                                <select id="seguridad" class="form-select">
+                                    <option value="Bajo">Bajo</option>
+                                    <option value="Medio">Medio</option>
+                                    <option value="Alto">Alto</option>
+                                    <option value="Crítico">Crítico</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nivel de Alimento (%)</label>
+                                <input type="number" id="alimento" class="form-control" required min="0" max="100">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Averías</label>
+                                <input type="number" id="averias" class="form-control" required min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Guardar Celda</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content text-center border-0 shadow">
+                <div class="modal-body p-4">
+                    <div class="text-danger mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
+                            class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z" />
+                        </svg>
+                    </div>
+                    <h5>¿Demoler registro?</h5>
+                    <p class="text-muted small">Esta acción es permanente.</p>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button type="button" class="btn btn-light btn-sm border"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btnConfirmDelete" class="btn btn-danger btn-sm">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060">
+        <div id="liveToast" class="toast align-items-center border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastMessage" class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/src/components/celdaManager.ts"></script>
+</body>
+
+</html>
