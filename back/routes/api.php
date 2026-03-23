@@ -48,5 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Simulacion
         Route::post('simular', [SimulacionController::class, 'ejecutar']);
+        Route::post('simular-brecha', [SimulacionController::class, 'simularBrecha']);
     });
 });
