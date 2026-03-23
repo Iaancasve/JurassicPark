@@ -18,10 +18,18 @@ export const setupLogin = (formElement: HTMLFormElement) => {
                     password: passInput?.value 
                 })
             });
+            if (response.success) {
+                const userData = response.data;
 
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('role', response.data.role);
-            window.location.href = '/src/views/dashboard.html'; 
+                localStorage.setItem('user_id', userData.id.toString());
+                localStorage.setItem('token', userData.token);
+                localStorage.setItem('role', userData.role);
+                
+                window.location.href = '/src/views/dashboard.html'; 
+            } else {
+                throw new Error(response.message || 'Credenciales no válidas');
+            }
+
         } catch (error) {
             if (errorMsg) {
                 errorMsg.textContent = 'Credenciales no válidas';

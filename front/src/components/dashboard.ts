@@ -18,6 +18,7 @@ const gridContainer = document.querySelector<HTMLDivElement>('#gridContainer');
 const btnSimular = document.getElementById('btnSimular') as HTMLButtonElement;
 const btnBrecha = document.getElementById('btnBrecha') as HTMLButtonElement; 
 const userRole = localStorage.getItem('role')?.toLowerCase().trim();
+const currentUserId = localStorage.getItem('user_id');
 
 let trabajadoresDisponibles: any[] = [];
 
@@ -27,17 +28,30 @@ echo.channel('mapa-parque')
         loadCeldas(); 
     });
 
-// Eventos de botones
 gridContainer?.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
     const id = target.getAttribute('data-id');
+
+    if (target.classList.contains('btn-tarea')) {
+        const estado = target.getAttribute('data-estado');
+        try {
+            await apiFetch('/tareas/actualizar', {
+                method: 'POST',
+                body: JSON.stringify({ celda_id: id, estado: estado })
+            });
+            mostrarNotificacion("Estado de tarea actualizado");
+            loadCeldas();
+        } catch (error) { console.error(error); }
+        return;
+    }
+
     if (!id) return;
 
     if (target.classList.contains('btn-recargar')) {
         try {
             target.textContent = '...';
             await apiFetch(`/celdas/${id}/recargar`, { method: 'POST' });
-            mostrarNotificacion(" Suministros enviados");
+            mostrarNotificacion("Suministros enviados");
         } catch (error) { console.error(error); }
     }
 
@@ -45,12 +59,11 @@ gridContainer?.addEventListener('click', async (e) => {
         try {
             target.textContent = '...';
             await apiFetch(`/celdas/${id}/reparar`, { method: 'POST' });
-            mostrarNotificacion(" Reparación iniciada");
+            mostrarNotificacion("Reparación iniciada");
         } catch (error) { console.error(error); }
     }
 });
 
-// Evento para asignación de personal
 gridContainer?.addEventListener('change', async (e) => {
     const target = e.target as HTMLSelectElement;
     if (target.classList.contains('select-asignar')) {
@@ -65,12 +78,12 @@ gridContainer?.addEventListener('change', async (e) => {
                 body: JSON.stringify({ celda_id: celdaId, user_id: userId })
             });
             
-            mostrarNotificacion(" Personal asignado con éxito");
+            mostrarNotificacion("Personal asignado con éxito");
             target.disabled = false;
             target.value = "";
             loadCeldas(); 
         } catch (error) {
-            mostrarNotificacion(" Error en la asignación", "danger");
+            mostrarNotificacion("Error en la asignación", "danger");
             target.disabled = false;
         }
     }
@@ -84,7 +97,7 @@ if (esAdmin && btnSimular) {
         try {
             btnSimular.disabled = true;
             await apiFetch('/simular', { method: 'POST' });
-            mostrarNotificacion(" Caos simulado");
+            mostrarNotificacion("Caos simulado");
             setTimeout(() => btnSimular.disabled = false, 1000);
         } catch (error) { btnSimular.disabled = false; }
     });
@@ -132,7 +145,24 @@ const renderGrid = (celdas: any[]) => {
     gridContainer.innerHTML = celdas.map(celda => {
         const color = getColorBySeguridad(celda.seguridad);
         
-        
+        // Buscamos si el usuario actual tiene una tarea en esta celda
+        const miTarea = celda.trabajadores?.find((t: any) => t.id == currentUserId);
+
+        let htmlTarea = '';
+        if (miTarea && miTarea.pivot) {
+            htmlTarea = `
+                <div class="alert alert-info p-2 mt-2" style="font-size: 0.8rem;">
+                    <strong>Mi Tarea:</strong> <span class="badge bg-info"></span>
+                    <div class="d-flex gap-1 mt-1">
+                        ${miTarea.pivot.estado === 'pendiente' ? 
+                            `<button class="btn btn-primary btn-sm btn-tarea w-100" data-id="${celda.id}" data-estado="en_progreso">Empezar</button>` : 
+                            `<button class="btn btn-success btn-sm btn-tarea w-100" data-id="${celda.id}" data-estado="finalizada">Terminar</button>`
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
         const listaTrabajadores = celda.trabajadores && celda.trabajadores.length > 0
             ? celda.trabajadores.map((t: any) => 
                 `<span class="badge bg-secondary me-1" style="font-size: 0.7rem;">
@@ -151,13 +181,13 @@ const renderGrid = (celdas: any[]) => {
                     </div>
                     <hr class="my-2">
                     
-                    <p class="card-text mb-1 small"><strong> Alimento:</strong> ${celda.alimento}%</p>
+                    <p class="card-text mb-1 small"><strong>Alimento:</strong> ${celda.alimento}%</p>
                     <div class="progress mb-2" style="height: 8px;">
                         <div class="progress-bar bg-${celda.alimento < 25 ? 'danger' : 'success'}" style="width: ${celda.alimento}%"></div>
                     </div>
 
                     <p class="mb-2 small">
-                        <strong> Averías:</strong> 
+                        <strong>Averías:</strong> 
                         <span class="badge ${celda.averias > 0 ? 'bg-warning text-dark' : 'bg-light text-muted'}">${celda.averias}</span>
                     </p>
 
@@ -165,6 +195,8 @@ const renderGrid = (celdas: any[]) => {
                         <label class="d-block small fw-bold mb-1 text-uppercase" style="font-size: 0.65rem;">Personal en zona:</label>
                         <div class="d-flex flex-wrap">${listaTrabajadores}</div>
                     </div>
+
+                    ${htmlTarea}
 
                     ${esAdmin ? `
                         <div class="mb-3">
