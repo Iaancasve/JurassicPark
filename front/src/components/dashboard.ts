@@ -3,7 +3,6 @@ import { initNavbar } from "./navbar";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
-
 (window as any).Pusher = Pusher;
 const echo = new Echo({
     broadcaster: 'reverb',
@@ -17,15 +16,14 @@ const echo = new Echo({
 
 const gridContainer = document.querySelector<HTMLDivElement>('#gridContainer');
 const btnSimular = document.getElementById('btnSimular') as HTMLButtonElement;
+const btnBrecha = document.getElementById('btnBrecha') as HTMLButtonElement; 
 const userRole = localStorage.getItem('role')?.toLowerCase().trim();
-
 
 echo.channel('mapa-parque')
     .listen('.celda.actualizada', (data: any) => {
         console.log("WebSocket: Actualizando conteo y estado de", data.celda.nombre);
         loadCeldas(); 
     });
-
 
 gridContainer?.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
@@ -47,8 +45,9 @@ gridContainer?.addEventListener('click', async (e) => {
     }
 });
 
-
 const esAdmin = userRole === 'admin' || userRole === 'administrador';
+
+// Lógica Simulación Caos
 if (esAdmin && btnSimular) {
     btnSimular.classList.remove('d-none');
     btnSimular.addEventListener('click', async () => {
@@ -60,6 +59,42 @@ if (esAdmin && btnSimular) {
     });
 }
 
+// Lógica Simulacion brecha
+if (esAdmin && btnBrecha) {
+    btnBrecha.classList.remove('d-none');
+    btnBrecha.addEventListener('click', async () => {
+        try {
+            btnBrecha.disabled = true;
+            btnBrecha.textContent = 'Calculando Riesgo...';
+            
+            const response = await apiFetch('/simular-brecha', { method: 'POST' });
+            const info = response.informe;
+            
+            const content = `
+                <h4 class="mb-3 ${info.resultado.includes('CAOS') ? 'text-danger' : 'text-success'}">
+                    ${info.resultado}
+                </h4>
+                <p><strong>Recinto afectado:</strong> ${info.celda}</p>
+                <p><strong>Dinosaurios en peligro:</strong> ${info.dinos_afectados}</p>
+                <div class="alert ${info.resultado.includes('CAOS') ? 'alert-danger' : 'alert-success'} small">
+                    ${info.detalle}
+                </div>
+                <p class="text-muted small">Probabilidad de fuga calculada: ${info.riesgo_calculado}</p>
+            `;
+            
+            document.getElementById('informeContent')!.innerHTML = content;
+            // @ts-ignore para que funciona bootstrap
+            const modal = new bootstrap.Modal(document.getElementById('modalInforme'));
+            modal.show();
+            
+            btnBrecha.disabled = false;
+            btnBrecha.textContent = ' Simular Brecha de Seguridad';
+        } catch (error) { 
+            btnBrecha.disabled = false;
+            btnBrecha.textContent = ' Simular Brecha de Seguridad';
+        }
+    });
+}
 
 const loadCeldas = async () => {
     try {
@@ -74,7 +109,6 @@ const loadCeldas = async () => {
 
 const renderGrid = (celdas: any[]) => {
     if (!gridContainer) return;
-
     
     const esVeterinario = userRole === 'veterinario';
     const esMantenimiento = userRole === 'mantenimiento';

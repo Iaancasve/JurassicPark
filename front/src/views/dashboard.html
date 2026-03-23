@@ -34,9 +34,14 @@
       <div class="col-12 text-center mb-4">
         <h3>Mapa de Celdas</h3>
         <p>Estado actual de los recintos</p>
-        <button id="btnSimular" class="btn btn-danger d-none shadow-sm mb-3">
-             Iniciar Simulación de Caos
-        </button>
+        <div class="d-flex justify-content-center gap-2">
+            <button id="btnSimular" class="btn btn-danger d-none shadow-sm mb-3">
+                Iniciar Simulación de Caos
+            </button>
+            <button id="btnBrecha" class="btn btn-warning d-none shadow-sm mb-3">
+                 Simular Brecha de Seguridad
+            </button>
+        </div>
       </div>
     </div>
 
@@ -44,7 +49,21 @@
     </div>
   </div>
 
+  <div class="modal fade" id="modalInforme" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-warning"> Informe de Incidente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div id="informeContent" class="modal-body text-center">
+                </div>
+        </div>
+    </div>
+  </div>
+
   <script type="module" src="../components/dashboard.ts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
