@@ -19,11 +19,14 @@ const btnSimular = document.getElementById('btnSimular') as HTMLButtonElement;
 const btnBrecha = document.getElementById('btnBrecha') as HTMLButtonElement; 
 const userRole = localStorage.getItem('role')?.toLowerCase().trim();
 
+let trabajadoresDisponibles: any[] = [];
+
 echo.channel('mapa-parque')
     .listen('.celda.actualizada', (data: any) => {
         console.log("WebSocket: Actualizando conteo y estado de", data.celda.nombre);
         loadCeldas(); 
     });
+
 
 gridContainer?.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
@@ -34,6 +37,7 @@ gridContainer?.addEventListener('click', async (e) => {
         try {
             target.textContent = '...';
             await apiFetch(`/celdas/${id}/recargar`, { method: 'POST' });
+            mostrarNotificacion(" Alimento enviado a la celda");
         } catch (error) { console.error(error); }
     }
 
@@ -41,7 +45,36 @@ gridContainer?.addEventListener('click', async (e) => {
         try {
             target.textContent = '...';
             await apiFetch(`/celdas/${id}/reparar`, { method: 'POST' });
+            mostrarNotificacion(" Reparación en curso");
         } catch (error) { console.error(error); }
+    }
+});
+
+
+gridContainer?.addEventListener('change', async (e) => {
+    const target = e.target as HTMLSelectElement;
+    if (target.classList.contains('select-asignar')) {
+        const celdaId = target.getAttribute('data-id');
+        const userId = target.value;
+        if (!userId) return;
+
+        try {
+            target.disabled = true;
+            await apiFetch('/celdas/asignar', {
+                method: 'POST',
+                body: JSON.stringify({ celda_id: celdaId, user_id: userId })
+            });
+            
+            
+            mostrarNotificacion(" Personal asignado con éxito");
+            
+            target.disabled = false;
+            target.value = ""; 
+        } catch (error) {
+            console.error("Error al asignar:", error);
+            mostrarNotificacion(" Error al asignar personal", "danger");
+            target.disabled = false;
+        }
     }
 });
 
@@ -54,6 +87,7 @@ if (esAdmin && btnSimular) {
         try {
             btnSimular.disabled = true;
             await apiFetch('/simular', { method: 'POST' });
+            mostrarNotificacion(" Simulación de caos iniciada");
             setTimeout(() => btnSimular.disabled = false, 1000);
         } catch (error) { btnSimular.disabled = false; }
     });
@@ -83,7 +117,7 @@ if (esAdmin && btnBrecha) {
             `;
             
             document.getElementById('informeContent')!.innerHTML = content;
-            // @ts-ignore para que funciona bootstrap
+            // @ts-ignore
             const modal = new bootstrap.Modal(document.getElementById('modalInforme'));
             modal.show();
             
@@ -112,6 +146,9 @@ const renderGrid = (celdas: any[]) => {
     
     const esVeterinario = userRole === 'veterinario';
     const esMantenimiento = userRole === 'mantenimiento';
+    const opcionesTrabajadores = trabajadoresDisponibles.map(t => 
+        `<option value="${t.id}">${t.nick || t.name} (${t.role?.nombre || 'Personal'})</option>`
+    ).join('');
 
     gridContainer.innerHTML = celdas.map(celda => {
         const color = getColorBySeguridad(celda.seguridad);
@@ -137,6 +174,17 @@ const renderGrid = (celdas: any[]) => {
                             ${celda.averias} activas
                         </span>
                     </p>
+
+                    ${esAdmin ? `
+                        <div class="mt-3 border-top pt-2">
+                            <label class="small fw-bold text-muted">Asignar Personal:</label>
+                            <select class="form-select form-select-sm select-asignar" data-id="${celda.id}">
+                                <option value="">Seleccionar...</option>
+                                ${opcionesTrabajadores}
+                            </select>
+                        </div>
+                    ` : ''}
+
                     <div class="d-grid gap-2 mt-3">
                         ${(esAdmin || esVeterinario) ? `
                             <button class="btn btn-sm btn-outline-success btn-recargar" data-id="${celda.id}">
@@ -162,5 +210,43 @@ const getColorBySeguridad = (nivel: string) => {
     return 'primary';
 };
 
+const loadTrabajadores = async () => {
+    try {
+        const response = await apiFetch('/trabajadores');
+        trabajadoresDisponibles = response.data;
+        console.log("Personal listo para asignar:", trabajadoresDisponibles);
+    } catch (error) {
+        console.error("Error al cargar trabajadores", error);
+    }
+};
+
+
+function mostrarNotificacion(mensaje: string, tipo: 'success' | 'danger' = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const id = `toast-${Date.now()}`;
+    const html = `
+        <div id="${id}" class="toast align-items-center text-white bg-${tipo} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">${mensaje}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+    const element = document.getElementById(id);
+    if (element) {
+        // @ts-ignore
+        const toast = new bootstrap.Toast(element, { delay: 3000 });
+        toast.show();
+        element.addEventListener('hidden.bs.toast', () => element.remove());
+    }
+}
+
+
 initNavbar();
-loadCeldas();
+loadTrabajadores().then(() => {
+    loadCeldas();
+});

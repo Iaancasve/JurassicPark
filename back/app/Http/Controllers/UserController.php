@@ -75,9 +75,11 @@ class UserController extends Controller
     }
     public function listarTrabajadores()
     {
-    $trabajadores = User::whereHas('role', function($q) {
-        $q->whereIn('nombre', ['veterinario', 'mantenimiento']);
-    })->get();
+    // Usamos with('role') para que el JSON incluya los datos del rol
+    $trabajadores = User::with('role')
+        ->whereHas('role', function($q) {
+            $q->whereIn('nombre', ['veterinario', 'mantenimiento']);
+        })->get();
 
     return response()->json([
         'success' => true,
