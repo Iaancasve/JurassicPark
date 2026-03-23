@@ -73,4 +73,15 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Usuario eliminado correctamente']);
     }
+    public function listarTrabajadores()
+    {
+    $trabajadores = User::whereHas('role', function($q) {
+        $q->whereIn('nombre', ['veterinario', 'mantenimiento']);
+    })->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $trabajadores
+    ]);
+    }
 }

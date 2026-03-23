@@ -44,6 +44,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('users/{user}', [UserController::class, 'update']);    
         Route::delete('users/{user}', [UserController::class, 'destroy']);
 
+        // Listar solo trabajadores (sin admins)
+        Route::get('trabajadores', [UserController::class, 'listarTrabajadores']);
+
         // Roles
         Route::get('roles', [RoleController::class, 'index']);
 
