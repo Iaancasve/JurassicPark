@@ -20,13 +20,19 @@ php artisan key:generate
 npm install
 
 Backend (API): ```bash
+
 cd back
+
 php artisan serve
 
 Reverb (WebSockets): ```bash
+
 cd back
+
 php artisan reverb:start
 
 Frontend (Vite): ```bash
+
 cd front
+
 npm run dev
