@@ -19,6 +19,8 @@ php artisan key:generate
 # En front 
 npm install
 
+
+# Para levantar los servidores
 Backend (API): ```bash
 
 cd back
