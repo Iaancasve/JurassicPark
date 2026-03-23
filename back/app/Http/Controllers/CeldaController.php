@@ -157,4 +157,25 @@ class CeldaController extends Controller
         'message' => 'Personal asignado correctamente'
     ]);
     }
+
+    public function actualizarTarea(Request $request)
+    {
+    $userId = auth()->id();
+    $celdaId = $request->celda_id;
+    $nuevoEstado = $request->estado; 
+
+    $celda = Celda::findOrFail($celdaId);
+
+    if ($nuevoEstado === 'finalizada') {
+        $celda->trabajadores()->detach($userId);
+        $mensaje = "Tarea completada y abandono de la celda.";
+    } else {
+        $celda->trabajadores()->updateExistingPivot($userId, ['estado' => $nuevoEstado]);
+        $mensaje = "Estado de la tarea actualizado a: " . $nuevoEstado;
+    }
+
+    broadcast(new CeldaUpdated($celda))->toOthers();
+
+    return response()->json(['success' => true, 'message' => $mensaje]);
+    }
 }
